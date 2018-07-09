@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Config.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mutant</a> &gt; <a href="index.source.html" class="el_package">com.gueka.mutant.config</a> &gt; <span class="el_source">Config.java</span></div><h1>Config.java</h1><pre class="source lang-java linenums">package com.gueka.mutant.config;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.gueka.mutant.validator.AbstractValidator;
+import com.gueka.mutant.validator.DefaultValidator;
+import com.gueka.mutant.validator.HorizontalValidator;
+import com.gueka.mutant.validator.ObliqueValidator;
+import com.gueka.mutant.validator.StructureValidator;
+import com.gueka.mutant.validator.VerticalValidator;
+
+@Configuration
+<span class="fc" id="L15">public class Config {</span>
+	
+	@Bean(&quot;obliqueValidator&quot;)
+	public AbstractValidator getObliqueValidation() {
+<span class="fc" id="L19">		AbstractValidator validator = new ObliqueValidator();</span>
+<span class="fc" id="L20">		validator.setNext(new DefaultValidator());</span>
+<span class="fc" id="L21">		return validator;</span>
+	}
+	@Bean(&quot;verticalValidator&quot;)
+	public AbstractValidator getVerticalValidation(@Qualifier(&quot;obliqueValidator&quot;) AbstractValidator next) {
+<span class="fc" id="L25">		AbstractValidator validator = new VerticalValidator();</span>
+<span class="fc" id="L26">		validator.setNext(next);</span>
+<span class="fc" id="L27">		return validator;</span>
+	}
+	@Bean(&quot;horizontalValidator&quot;)
+	public AbstractValidator getHorizontalValidation(@Qualifier(&quot;verticalValidator&quot;) AbstractValidator next) {
+<span class="fc" id="L31">		AbstractValidator validator = new HorizontalValidator();</span>
+<span class="fc" id="L32">		validator.setNext(next);</span>
+<span class="fc" id="L33">		return validator;</span>
+	}
+	@Bean(&quot;structureValidator&quot;)
+	public AbstractValidator getStructureValidation(@Qualifier(&quot;horizontalValidator&quot;) AbstractValidator next) {
+<span class="fc" id="L37">		StructureValidator validator = new StructureValidator();</span>
+<span class="fc" id="L38">		validator.setNext(next);</span>
+<span class="fc" id="L39">		return validator;</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

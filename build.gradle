@@ -1,0 +1,82 @@
+buildscript {
+	ext {
+		springBootVersion = '2.1.0.BUILD-SNAPSHOT'
+	}
+	repositories {
+		mavenCentral()
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: "jacoco"
+apply plugin: 'scala'
+
+group = 'com.gueka'
+version = '1.0.0'
+sourceCompatibility = 1.8
+
+ext['netty.version'] = '4.0.51.Final'
+
+
+jacoco {
+    toolVersion = "0.8.1"
+    reportsDir = file("$projectDir/documents/cobertura")
+}
+
+jacocoTestReport {
+    reports {
+        html {
+            enabled true
+        }
+    }
+ 
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    'com/gueka/mutant/config**',
+                    'com/gueka/mutant/MutantApplication**',
+                    'com/gueka/mutant/handler**'
+            ])
+        })
+    }
+}
+
+repositories {
+	mavenCentral()
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+}
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-data-mongodb-reactive')
+	compile('org.springframework.boot:spring-boot-starter-webflux')
+	compileOnly('org.projectlombok:lombok')
+	
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('io.projectreactor:reactor-test')
+    
+	testCompile group: "de.flapdoodle.embed", name: "de.flapdoodle.embed.mongo", version: "2.0.1"
+	testCompile group: 'io.gatling.highcharts', name: 'gatling-charts-highcharts', version: '2.3.0'
+}
+
+task loadTest(type: JavaExec) {
+   description = "Load Test With Gatling"
+   new File("$projectDir/documents/gatling").mkdirs()
+
+    systemProperties System.getProperties()
+
+    classpath = sourceSets.test.runtimeClasspath + configurations.testCompile + configurations.compile
+
+    main = "io.gatling.app.Gatling"
+    args = ['-s', 'com.gueka.mutant.PerformanceTest', // -- simulation
+            '-rf', "$projectDir/documents/gatling" //-- results-folder
+    ]
+}

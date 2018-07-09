@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MutantHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mutant</a> &gt; <a href="index.source.html" class="el_package">com.gueka.mutant.handler</a> &gt; <span class="el_source">MutantHandler.java</span></div><h1>MutantHandler.java</h1><pre class="source lang-java linenums">package com.gueka.mutant.handler;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+
+import com.gueka.mutant.domain.DNA;
+import com.gueka.mutant.repository.DNARepository;
+import com.gueka.mutant.request.DNARequest;
+import com.gueka.mutant.service.DNAService;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.util.Logger;
+import reactor.util.Loggers;
+
+<span class="nc" id="L18">public class MutantHandler {</span>
+	
+	@Autowired
+	private DNARepository repository;
+	
+	@Autowired
+	private DNAService service;
+	
+<span class="nc" id="L26">	private static final Logger log = Loggers.getLogger(MutantHandler.class);</span>
+
+	
+	public Mono&lt;ServerResponse&gt; isMutant(ServerRequest req) { 
+		
+<span class="nc" id="L31">		Mono&lt;Boolean&gt; response = service.isMutant(req.bodyToMono(DNARequest.class)).log(log);</span>
+<span class="nc bnc" id="L32" title="All 2 branches missed.">		Mono&lt;ServerResponse&gt; sr = response.flatMap( (isMutant) -&gt; isMutant ? </span>
+<span class="nc" id="L33">				ServerResponse.ok().build() : ServerResponse.status(HttpStatus.BAD_GATEWAY).build()).log(log);</span>
+<span class="nc" id="L34">		response.flatMap( (isMutant) -&gt;  </span>
+				{
+<span class="nc" id="L36">					log.debug(&quot;Saving dna&quot;);</span>
+<span class="nc" id="L37">					DNA document = new DNA();</span>
+<span class="nc" id="L38">					document.setDna(new String[]{&quot;ATGCGA&quot;,&quot;CAGTGC&quot;,&quot;TTATGT&quot;,&quot;AGAAGG&quot;,&quot;CCCCTA&quot;,&quot;TCACTG&quot;});</span>
+<span class="nc" id="L39">					document.setIsMutant(isMutant);</span>
+<span class="nc" id="L40">					return repository.save(document);</span>
+<span class="nc" id="L41">				}).log(log);</span>
+<span class="nc" id="L42">		log.debug(&quot;Finish processing dna&quot;);</span>
+<span class="nc" id="L43">		return sr;</span>
+    }
+	
+	public Flux&lt;DNA&gt; getAll(ServerRequest req) {
+<span class="nc" id="L47">        return repository.findAll();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

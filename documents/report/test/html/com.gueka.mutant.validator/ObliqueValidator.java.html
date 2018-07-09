@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ObliqueValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">mutant</a> &gt; <a href="index.source.html" class="el_package">com.gueka.mutant.validator</a> &gt; <span class="el_source">ObliqueValidator.java</span></div><h1>ObliqueValidator.java</h1><pre class="source lang-java linenums">package com.gueka.mutant.validator;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Value;
+
+import lombok.NoArgsConstructor;
+
+<span class="fc" id="L13">@NoArgsConstructor</span>
+public class ObliqueValidator extends AbstractValidator {
+
+	@Value(&quot;${mutant.validator.oblique.size}&quot;)
+	private Integer size;
+	
+	@Value(&quot;${mutant.validator.pattern}&quot;)
+	private String regex;
+	
+	private Pattern pattern;
+	
+	@Override
+	protected Boolean isMutant(String[] dna) {
+<span class="fc" id="L26">		List&lt;String&gt; dnaList = Arrays.asList(dna);</span>
+<span class="fc" id="L27">		List&lt;String&gt; diagonals = getDiagonals(dnaList, size);</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">		if(diagonals.stream().filter(getPattern().asPredicate()).findAny().isPresent()) {</span>
+<span class="fc" id="L29">			return true;</span>
+		}
+<span class="fc" id="L31">		List&lt;String&gt; invertDna = dnaList.stream().map(value -&gt; new StringBuilder(value).reverse().toString() ).collect(Collectors.toList());</span>
+<span class="fc" id="L32">		List&lt;String&gt; invertDiagonals = getDiagonals(invertDna, size);</span>
+<span class="fc" id="L33">		return invertDiagonals.stream().filter(getPattern().asPredicate()).findAny().isPresent();</span>
+	}
+
+	private List&lt;String&gt; getDiagonals(List&lt;String&gt; rows, Integer diagSize) {
+<span class="fc" id="L37">		List&lt;String&gt; colDiag = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L38">		List&lt;String&gt; rowDiag = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L39">		Integer colMax = rows.get(0).length() - (diagSize - 1);</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">		for(int i = 0; i &lt; colMax; i++) {</span>
+<span class="fc" id="L41">			colDiag.add(getDiagonal(i, 0, rows, rows.get(i).length()));</span>
+		}
+<span class="fc" id="L43">		Integer rowMax = rows.size() - (diagSize - 1);</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">		for(int i = 0; i &lt; rowMax; i++) {</span>
+<span class="fc" id="L45">			rowDiag.add(getDiagonal(0, i, rows, rows.size()));</span>
+		}
+<span class="fc" id="L47">		colDiag.addAll(rowDiag);</span>
+<span class="fc" id="L48">		return colDiag;</span>
+	}
+
+	private String getDiagonal(Integer colStart, Integer rowStart, List&lt;String&gt; rows, Integer rowSize) {
+<span class="fc" id="L52">		StringBuilder diagonal = new StringBuilder();</span>
+<span class="fc" id="L53">		Integer columnSize = rows.size();</span>
+<span class="fc" id="L54">		Integer min = Math.min(columnSize - colStart, rowSize - rowStart);</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">		for(int i = 0; i &lt; min;i++) {</span>
+<span class="fc" id="L56">			diagonal.append(rows.get(i + rowStart).charAt(i + colStart));</span>
+		}
+<span class="fc" id="L58">		return diagonal.toString();</span>
+	}
+	
+	@Override
+	public Boolean processDNA(String[] dna) {
+<span class="fc" id="L63">		Boolean result = isMutant(dna);</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">		if(!result) {</span>
+<span class="fc" id="L65">			return getNext().processDNA(dna);</span>
+		}
+<span class="fc" id="L67">		return true;</span>
+	}
+
+	public Pattern getPattern() {
+<span class="fc bfc" id="L71" title="All 2 branches covered.">		if(pattern == null) {</span>
+<span class="fc" id="L72">			pattern = Pattern.compile(regex);</span>
+		}
+<span class="fc" id="L74">		return pattern;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

@@ -1,0 +1,10 @@
+{
+  "simulation": "com.gueka.mutant.PerformanceTest",
+  "simulationId": "performancetest",
+  "start": 1531113495927,
+  "description": "",
+  "scenarios": ["BootLoadSimulation"],
+  "assertions": [
+
+  ]
+}
