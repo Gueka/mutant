@@ -1,4 +1,4 @@
-package com.gueka.mutant.validator;
+package com.gueka.mutant;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -7,10 +7,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.gueka.mutant.config.DBTestConfig;
 import com.gueka.mutant.request.DNARequest;
 import com.gueka.mutant.service.DNAService;
 import com.gueka.mutant.validator.DefaultValidator;
@@ -23,8 +21,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @RunWith(SpringRunner.class)
-@ActiveProfiles("test")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = DBTestConfig.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ValidationTest {
 
 	@Autowired

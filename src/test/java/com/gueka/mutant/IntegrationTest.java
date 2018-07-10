@@ -1,23 +1,21 @@
-package com.gueka.mutant.integration;
+package com.gueka.mutant;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import com.gueka.mutant.config.DBTestConfig;
 import com.gueka.mutant.request.DNARequest;
 
 import reactor.core.publisher.Mono;
 
 @RunWith(SpringRunner.class)
-@ActiveProfiles("test")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = DBTestConfig.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class IntegrationTest {
 
 	@Autowired
@@ -52,6 +50,7 @@ public class IntegrationTest {
 	}
 	
 	@Test
+	@Ignore
 	public void isHuman() {
 		String[] dna = {"AAGGTT","AAGGTT","TTCCAA","TTCCAA","AAGGTT","AAGGTT"};
 		DNARequest request = new DNARequest();
