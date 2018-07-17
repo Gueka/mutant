@@ -1,6 +1,0 @@
-FROM alpine-java:base
-MAINTAINER gueka.me
-ENTRYPOINT ["/usr/bin/java"]
-CMD ["-jar", "/home/marco/Code/Java/mutant/build/libs/mutant-1.0.0.jar"]
-VOLUME /tmp/mutant/service
-EXPOSE 8080

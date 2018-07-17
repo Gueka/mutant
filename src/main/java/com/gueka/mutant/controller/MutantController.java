@@ -21,8 +21,6 @@ import reactor.core.publisher.Mono;
 @RestController
 public class MutantController {
 
-	private static final int DELAY_PER_ITEM_MS = 1;
-	 
 	@Autowired
 	private DNARepository repository;
 	
