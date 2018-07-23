@@ -1,0 +1,53 @@
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "gradle.plugin.com.github.lkishalmi.gatling:gradle-gatling-plugin:0.7.1"
+  }
+}
+
+apply plugin: 'scala'
+apply plugin: 'eclipse'
+apply plugin: "com.github.lkishalmi.gatling"
+
+
+configurations {
+    scalaCompiler
+    scalaLibrary
+}
+
+repositories {
+   mavenCentral()
+   jcenter()
+} 
+
+
+eclipse {
+    classpath.containers += ["org.scala-ide.sdt.launching.SCALA_CONTAINER"]
+    classpath.minusConfigurations = [configurations.scalaLibrary]
+    classpath.plusConfigurations =  ([configurations.scalaCompiler]	+ classpath.plusConfigurations)
+}
+
+tasks.withType(ScalaCompile) {
+    //scalaCompileOptions.useCompileDaemon = false
+    //scalaCompileOptions.useAnt = false
+    scalaCompileOptions.additionalParameters = ['-target:jvm-1.8']
+}
+
+dependencies {
+
+    scalaLibrary "org.scala-lang:scala-library:2.11.8"
+    testCompile "org.scala-lang:scala-library:2.11.8"
+    testCompile "io.gatling.highcharts:gatling-charts-highcharts:2.2.5"
+}
+
+sourceSets {
+    test {
+        scala { 
+            srcDirs = ['src/gatling/scala']
+        }        
+    }
+}
