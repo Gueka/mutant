@@ -20,22 +20,20 @@ public class DNAStats {
 	private Integer humanCount = 0;
 	
 	private Double ratio;
-	
-	public void increaseMutantCount() {
-		mutantCount++;
-		updateRatio();
-	}
-	
-	public void increaseHumanCount() {
-		humanCount++;
-		updateRatio();
+
+	public void updateRatio() {
+		Double mutantDouble = getMutantCount().doubleValue();
+		Double humanDouble = getHumanCount().doubleValue();
+		Double result = (mutantDouble - humanDouble) / (mutantDouble + humanDouble);
+		this.ratio = Double.parseDouble( new DecimalFormat("#.##").format(result) );
 	}
 
-	private void updateRatio() {
-		Double mutantDouble = mutantCount.doubleValue();
-		Double humanDouble = humanCount.doubleValue();
-		Double result = (mutantDouble - humanDouble) / (mutantDouble + humanDouble);
-		ratio = Double.parseDouble( new DecimalFormat("#.##").format(result) );
+	public void setMutantCount(Integer mutantCount) {
+		this.mutantCount = mutantCount;
+	}
+
+	public void setHumanCount(Integer humanCount) {
+		this.humanCount = humanCount;
 	}
 	
 }

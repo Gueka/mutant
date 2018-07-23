@@ -1,5 +1,4 @@
 FROM openjdk:8-jdk-alpine
-VOLUME /tmp
-ARG JAR_FILE
-COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+ADD build/libs/mutant-1.0.0.jar mutant.jar
+RUN sh -c 'touch /mutant.jar'
+ENTRYPOINT ["java", "-Dspring.data.mongodb.uri=mongodb://mutant-mongo/mutant","-Djava.security.egd=file:/dev/./urandom","-jar","/mutant.jar"]

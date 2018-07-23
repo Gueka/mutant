@@ -28,17 +28,25 @@ public class MutantController {
 	private DNAService service;
     
     @GetMapping("/stats")
-    public Flux<DNAStats> getStats() {
-    	DNAStats stats = new DNAStats();
-    	// TODO: instead of retrieving data test for count if we can perform better.
-        return repository.findAll().map(dna -> {
-        	if(dna.getIsMutant()) {
-        		stats.increaseMutantCount();
-        	}else {
-        		stats.increaseHumanCount();
-        	}
-        	return new DNAStats(stats.getMutantCount(),stats.getHumanCount(),stats.getRatio());
-        }).cache();
+    public Mono<DNAStats> getStats() {
+    	DNAStats result = new DNAStats();    	
+    	return repository.findAll()
+        		.map(dna -> {
+		        	DNAStats stats = new DNAStats();
+		        	if(dna.getIsMutant()) {
+		        		stats.setMutantCount(1);
+		        	}else {
+		        		stats.setHumanCount(1);
+		        	}
+		        	return stats;
+		        	})
+	        	.reduce(result, (s1, s2) -> {
+	        		result.setMutantCount(s1.getMutantCount() + s2.getMutantCount());
+	        		result.setHumanCount(s1.getHumanCount() + s2.getHumanCount());
+	        		result.updateRatio();
+	        		return result;
+	        	});
+    	
     }
     
     @RequestMapping(method = RequestMethod.POST, value = "/mutant")
